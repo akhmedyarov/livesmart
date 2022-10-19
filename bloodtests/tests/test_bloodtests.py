@@ -151,7 +151,7 @@ class TestBloodTests():
         response = request_client.post(self.apipath + 'CHO', content_type='application/json', data=json.dumps(data))
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         content = json.loads(response.content)
-        assert 'Lower and upper cannot both be null' in content['non_field_errors']
+        assert 'Lower and upper cannot both be null' in content
 
     def test_post_error_lower_gt_upper(self, request_client):
         data = {'code': 'CHO', 'name': 'Cholesterol', 'unit': 'g/M', 'upper': 99, 'lower': 45}
@@ -159,4 +159,4 @@ class TestBloodTests():
         response = request_client.post(self.apipath + 'CHO', content_type='application/json', data=json.dumps(data))
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         content = json.loads(response.content)
-        assert "Lower value can't exceed upper value" in content['non_field_errors']
+        assert "Lower value can't exceed upper value" in content
