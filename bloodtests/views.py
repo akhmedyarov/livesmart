@@ -1,5 +1,4 @@
-# from django.http import Http404
-# from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
@@ -24,8 +23,13 @@ class TestDetails(mixins.RetrieveModelMixin,
         return self.create(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        test = Test.objects.filter(code=request.data['code']).first()
+        if not test:
+            serializer = self.get_serializer(data=request.data)
+        else:
+            serializer = TestSerializer(test, data=request.data)
+
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
