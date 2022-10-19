@@ -20,3 +20,16 @@ class TestSerializer(serializers.ModelSerializer):
 
         elif not obj.lower and obj.upper:
             return f'value <= {obj.upper}'
+
+    def validate(self, data):
+        lower = data.get('lower', None)
+        upper = data.get('upper', None)
+
+        is_lower_and_upper_exists = lower and upper
+        if is_lower_and_upper_exists and upper < lower:
+            raise serializers.ValidationError("Lower value can't exceed upper value")
+
+        if not lower and not upper:
+            raise serializers.ValidationError("Lower and upper cannot both be null")
+
+        return data

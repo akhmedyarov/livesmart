@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import mixins
@@ -20,9 +19,9 @@ class TestDetails(mixins.RetrieveModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        return self.create_or_update(request, *args, **kwargs)
 
-    def create(self, request, *args, **kwargs):
+    def create_or_update(self, request, *args, **kwargs):
         test = Test.objects.filter(code=request.data['code']).first()
         if not test:
             serializer = self.get_serializer(data=request.data)
@@ -32,4 +31,3 @@ class TestDetails(mixins.RetrieveModelMixin,
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
